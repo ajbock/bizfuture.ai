@@ -4,9 +4,9 @@ import Link from 'next/link'
 export default async function ListingsPage({
   searchParams,
 }: {
-  searchParams: { state?: string; industry?: string; keyword?: string }
+  searchParams: Promise<{ state?: string; industry?: string; keyword?: string }>
 }) {
-  const { state, industry, keyword } = searchParams
+  const { state, industry, keyword } = await searchParams
 
   let query = supabase
     .from('businesses')
