@@ -1,4 +1,11 @@
-export default function Home() {
+import { supabase } from '@/lib/supabase'
+
+export default async function Home() {
+  const { data, error } = await supabase
+    .from('businesses')
+    .select('*')
+    .limit(1)
+
   return (
     <main className="min-h-screen bg-[#0a0f1e] flex flex-col items-center justify-center px-6 text-center">
       
@@ -27,7 +34,7 @@ export default function Home() {
         </button>
       </div>
 
-      <div className="flex gap-12 text-center">
+      <div className="flex gap-12 text-center mb-16">
         <div>
           <div className="text-3xl font-black text-cyan-400">AI</div>
           <div className="text-xs text-slate-500 uppercase tracking-wide mt-1">Powered</div>
@@ -42,10 +49,11 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="absolute bottom-6 text-slate-600 text-xs">
-        © 2026 BizFuture.ai — The Future of Business Sales
+      {/* Database connection test */}
+      <div className="text-xs text-slate-600">
+        {error ? '❌ Database not connected' : '✅ Database connected'}
       </div>
 
     </main>
-  );
+  )
 }
