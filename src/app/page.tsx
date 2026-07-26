@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import Link from 'next/link'
 
 export default async function Home() {
   const { data, error } = await supabase
@@ -26,12 +27,18 @@ export default async function Home() {
       </p>
 
       <div className="flex flex-col sm:flex-row gap-4 mb-16">
-        <button className="bg-cyan-400 text-[#0a0f1e] font-bold px-8 py-4 rounded-full text-sm uppercase tracking-wide hover:bg-cyan-300 transition">
+        <Link 
+          href="/listings"
+          className="bg-cyan-400 text-[#0a0f1e] font-bold px-8 py-4 rounded-full text-sm uppercase tracking-wide hover:bg-cyan-300 transition"
+        >
           Browse Businesses For Sale
-        </button>
-        <button className="border border-cyan-400 text-cyan-400 font-bold px-8 py-4 rounded-full text-sm uppercase tracking-wide hover:bg-cyan-400 hover:text-[#0a0f1e] transition">
+        </Link>
+        <Link 
+          href="/listings/new"
+          className="border border-cyan-400 text-cyan-400 font-bold px-8 py-4 rounded-full text-sm uppercase tracking-wide hover:bg-cyan-400 hover:text-[#0a0f1e] transition"
+        >
           List Your Business
-        </button>
+        </Link>
       </div>
 
       <div className="flex gap-12 text-center mb-16">
@@ -47,11 +54,6 @@ export default async function Home() {
           <div className="text-3xl font-black text-cyan-400">2027</div>
           <div className="text-xs text-slate-500 uppercase tracking-wide mt-1">Built For</div>
         </div>
-      </div>
-
-      {/* Database connection test */}
-      <div className="text-xs text-slate-600">
-        {error ? '❌ Database not connected' : '✅ Database connected'}
       </div>
 
     </main>
