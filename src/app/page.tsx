@@ -1,11 +1,31 @@
-﻿import { supabase } from "@/lib/supabase"
-import Link from "next/link"
+﻿import Link from "next/link"
+import { createClient } from "@/lib/supabase-server"
 
 export default async function Home() {
-  const { data } = await supabase.from("businesses").select("*").limit(1)
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
 
   return (
     <main className="min-h-screen bg-[#0a0f1e] flex flex-col items-center justify-center px-6 text-center">
+
+      <div className="absolute top-0 left-0 right-0 px-6 py-4 flex items-center justify-between max-w-6xl mx-auto w-full">
+        <span className="text-xl font-black text-white">Biz<span className="text-cyan-400">Future</span>.ai</span>
+        <div className="flex items-center gap-3">
+          {user ? (
+            <Link href="/dashboard" className="bg-cyan-400 text-[#0a0f1e] font-bold px-5 py-2 rounded-full text-sm uppercase tracking-wide hover:bg-cyan-300 transition">
+              Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link href="/login" className="text-slate-400 text-sm hover:text-white transition">Sign In</Link>
+              <Link href="/signup" className="bg-cyan-400 text-[#0a0f1e] font-bold px-5 py-2 rounded-full text-sm uppercase tracking-wide hover:bg-cyan-300 transition">
+                Sign Up
+              </Link>
+            </>
+          )}
+        </div>
+      </div>
+
       <div className="mb-6 flex items-center gap-3">
         <div className="w-3 h-3 rounded-full bg-cyan-400 animate-pulse" />
         <span className="text-cyan-400 text-sm font-bold uppercase tracking-widest">
@@ -48,6 +68,7 @@ export default async function Home() {
           <div className="text-xs text-slate-500 uppercase tracking-wide mt-1">Built For</div>
         </div>
       </div>
+
     </main>
   )
 }
