@@ -26,6 +26,9 @@ export default async function DashboardPage() {
             <Link href="/listings/new" className="bg-cyan-400 text-[#0a0f1e] font-bold px-4 py-2 rounded-full text-sm uppercase tracking-wide hover:bg-cyan-300 transition">
               Post Ad
             </Link>
+            <Link href="/auth/signout" className="text-slate-400 text-sm hover:text-white transition">
+              Sign Out
+            </Link>
           </div>
         </div>
       </div>
@@ -69,7 +72,10 @@ export default async function DashboardPage() {
                 </div>
                 <div className="text-right shrink-0">
                   <div className="text-white font-black">{biz.asking_price ? "$" + Number(biz.asking_price).toLocaleString() : "Contact"}</div>
-                  <Link href={"/listings/" + biz.id} className="text-cyan-400 text-xs hover:underline">View Listing</Link>
+                  <div className="flex gap-3 mt-1 justify-end">
+                    <Link href={"/listings/" + biz.id} className="text-cyan-400 text-xs hover:underline">View</Link>
+                    <Link href={"/listings/" + biz.id + "/edit"} className="text-slate-400 text-xs hover:underline">Edit</Link>
+                  </div>
                 </div>
               </div>
             ))}
@@ -89,14 +95,13 @@ export default async function DashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-white font-bold mb-1">Upgrade Your Plan</h3>
-              <p className="text-slate-400 text-sm">Get featured placement, AI optimization and buyer matching alerts</p>
+              <p className="text-slate-400 text-sm">Get featured placement AI optimization and buyer matching alerts</p>
             </div>
             <Link href="/pricing" className="bg-cyan-400 text-[#0a0f1e] font-bold px-6 py-3 rounded-full text-sm uppercase tracking-wide hover:bg-cyan-300 transition whitespace-nowrap">
               View Plans
             </Link>
           </div>
         </div>
-
       </div>
     </main>
   )
