@@ -4,6 +4,7 @@ import { useState } from "react"
 import { supabase } from "@/lib/supabase"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import ImageUpload from "@/components/ImageUpload"
 
 const states = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"]
 const industries = ["Agriculture","Automotive","Beauty","Building & Construction","Communication & Media","Financial Services","Health Care & Fitness","Manufacturing","Office","Other","Pet Services","Restaurants & Food","Retail","Service","Technology & Website","Transportation & Storage","Travel","Wholesale & Distributors"]
@@ -15,6 +16,7 @@ export default function NewListingPage() {
   const [loading, setLoading] = useState(false)
   const [aiLoading, setAiLoading] = useState(false)
   const [error, setError] = useState("")
+  const [images, setImages] = useState<string[]>([])
   const [form, setForm] = useState({
     title: "", description: "", listing_type: "For Sale", industry: "",
     asking_price: "", cash_flow: "", annual_revenue: "", ebitda: "",
@@ -39,11 +41,8 @@ export default function NewListingPage() {
         body: JSON.stringify(form)
       })
       const data = await res.json()
-      if (data.description) {
-        setForm(f => ({ ...f, description: data.description }))
-      } else {
-        setError("AI generation failed. Please try again.")
-      }
+      if (data.description) setForm(f => ({ ...f, description: data.description }))
+      else setError("AI generation failed. Please try again.")
     } catch {
       setError("AI generation failed. Please try again.")
     }
@@ -56,6 +55,7 @@ export default function NewListingPage() {
     setError("")
     const { error } = await supabase.from("businesses").insert([{
       ...form,
+      images,
       asking_price: form.asking_price ? Number(form.asking_price.replace(/,/g, "")) : null,
       cash_flow: form.cash_flow ? Number(form.cash_flow.replace(/,/g, "")) : null,
       annual_revenue: form.annual_revenue ? Number(form.annual_revenue.replace(/,/g, "")) : null,
@@ -65,7 +65,7 @@ export default function NewListingPage() {
       established_year: form.established_year ? Number(form.established_year) : null,
     }])
     if (error) { setError(error.message); setLoading(false) }
-    else router.push("/listings")
+    else router.push("/dashboard")
   }
 
   const inputClass = "w-full bg-[#0a0f1e] border border-[#1e2d45] rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 text-sm"
@@ -77,7 +77,7 @@ export default function NewListingPage() {
       <div className="bg-[#111827] border-b border-[#1e2d45] px-6 py-4 mb-8">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <Link href="/" className="text-xl font-black">Biz<span className="text-cyan-400">Future</span>.ai</Link>
-          <Link href="/listings" className="text-slate-400 text-sm hover:text-white transition">Back to Listings</Link>
+          <Link href="/dashboard" className="text-slate-400 text-sm hover:text-white transition">My Dashboard</Link>
         </div>
       </div>
 
@@ -97,6 +97,11 @@ export default function NewListingPage() {
               </button>
             ))}
           </div>
+        </div>
+
+        <div className={sectionClass}>
+          <h2 className="text-lg font-bold text-white mb-4">Photos</h2>
+          <ImageUpload images={images} onChange={setImages} />
         </div>
 
         <div className={sectionClass}>
@@ -126,7 +131,7 @@ export default function NewListingPage() {
                 </button>
               </div>
               <textarea name="description" value={form.description} onChange={handle}
-                placeholder="Describe your business or click AI Write Description to generate automatically..." rows={6} className={inputClass} />
+                placeholder="Describe your business or click AI Write Description..." rows={6} className={inputClass} />
             </div>
           </div>
         </div>
