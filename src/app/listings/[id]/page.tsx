@@ -30,6 +30,18 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
       </div>
 
       <div className="max-w-5xl mx-auto px-6 pb-16">
+
+        {biz.images && biz.images.length > 0 && (
+          <div className="mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {biz.images.map((url: string, i: number) => (
+                <img key={i} src={url} alt={"Photo " + (i + 1)}
+                  className={"object-cover rounded-2xl border border-[#1e2d45] " + (i === 0 ? "md:col-span-2 h-64" : "h-40")} />
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 flex flex-col gap-6">
 
@@ -45,7 +57,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
             {biz.description && (
               <div className="bg-[#111827] border border-[#1e2d45] rounded-2xl p-6">
                 <h2 className="text-lg font-bold text-white mb-3">About This Business</h2>
-                <p className="text-slate-400 text-sm leading-relaxed">{biz.description}</p>
+                <p className="text-slate-400 text-sm leading-relaxed whitespace-pre-line">{biz.description}</p>
               </div>
             )}
 
