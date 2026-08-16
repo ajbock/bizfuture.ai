@@ -2,6 +2,7 @@
 import { notFound } from "next/navigation"
 import { createClient } from "@supabase/supabase-js"
 import MatchedBuyers from "./MatchedBuyers"
+import InquiryForm from "./InquiryForm"
 
 export default async function ListingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -111,16 +112,8 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
               </div>
             </div>
 
-            <div className="bg-[#111827] border border-[#1e2d45] rounded-2xl p-6">
-              <h2 className="text-lg font-bold text-white mb-4">Send Inquiry</h2>
-              <div className="flex flex-col gap-3">
-                <input placeholder="Your Name" className="bg-[#0a0f1e] border border-[#1e2d45] rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 text-sm" />
-                <input placeholder="Your Email" className="bg-[#0a0f1e] border border-[#1e2d45] rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 text-sm" />
-                <input placeholder="Your Phone" className="bg-[#0a0f1e] border border-[#1e2d45] rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 text-sm" />
-                <textarea placeholder="I am interested in this business..." rows={4} className="bg-[#0a0f1e] border border-[#1e2d45] rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 text-sm" />
-                <button className="bg-cyan-400 text-[#0a0f1e] font-black py-3 rounded-xl text-sm uppercase tracking-wide hover:bg-cyan-300 transition">Send Message</button>
-              </div>
-            </div>
+            <InquiryForm businessId={biz.id} />
+
           </div>
         </div>
       </div>
