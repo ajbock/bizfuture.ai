@@ -14,6 +14,14 @@ export default async function DashboardPage() {
     .eq("email", user.email)
     .order("created_at", { ascending: false })
 
+  const { data: inquiries } = await supabase
+    .from("inquiries")
+    .select("business_id")
+
+  const inquiryCount = (bizId: string) =>
+    inquiries?.filter(i => i.business_id === bizId).length ?? 0
+
+  const totalInquiries = inquiries?.length ?? 0
   const name = user.user_metadata?.name || user.email
 
   return (
@@ -34,9 +42,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="max-w-5xl mx-auto px-6 pb-16">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-black text-white">My Dashboard</h1>
-        </div>
+        <h1 className="text-3xl font-black text-white mb-8">My Dashboard</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           <div className="bg-[#111827] border border-[#1e2d45] rounded-2xl p-6 text-center">
@@ -44,7 +50,7 @@ export default async function DashboardPage() {
             <div className="text-slate-400 text-sm mt-1">Active Listings</div>
           </div>
           <div className="bg-[#111827] border border-[#1e2d45] rounded-2xl p-6 text-center">
-            <div className="text-3xl font-black text-cyan-400">0</div>
+            <div className="text-3xl font-black text-cyan-400">{totalInquiries}</div>
             <div className="text-slate-400 text-sm mt-1">Total Inquiries</div>
           </div>
           <div className="bg-[#111827] border border-[#1e2d45] rounded-2xl p-6 text-center">
@@ -65,7 +71,14 @@ export default async function DashboardPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-1">
                     <span className="text-xs bg-cyan-400/10 text-cyan-400 border border-cyan-400/20 px-3 py-1 rounded-full">{biz.industry ?? "Business"}</span>
-                    <span className="text-xs text-slate-500">{biz.status ?? "active"}</span>
+                    <span className={"text-xs px-3 py-1 rounded-full border " + (biz.status === "sold" ? "bg-green-400/10 text-green-400 border-green-400/20" : biz.status === "pending" ? "bg-yellow-400/10 text-yellow-400 border-yellow-400/20" : "bg-slate-400/10 text-slate-400 border-slate-400/20")}>
+                      {biz.status ?? "active"}
+                    </span>
+                    {inquiryCount(biz.id) > 0 && (
+                      <span className="text-xs bg-purple-400/10 text-purple-400 border border-purple-400/20 px-3 py-1 rounded-full">
+                        {inquiryCount(biz.id)} {inquiryCount(biz.id) === 1 ? "inquiry" : "inquiries"}
+                      </span>
+                    )}
                   </div>
                   <h3 className="text-white font-bold">{biz.title}</h3>
                   <p className="text-slate-400 text-sm">{[biz.city, biz.state].filter(Boolean).join(", ")}</p>
