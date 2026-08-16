@@ -11,6 +11,8 @@ export default async function Home() {
       <div className="absolute top-0 left-0 right-0 px-6 py-4 flex items-center justify-between max-w-6xl mx-auto w-full">
         <span className="text-xl font-black text-white">Biz<span className="text-cyan-400">Future</span>.ai</span>
         <div className="flex items-center gap-3">
+          <Link href="/broker" className="text-slate-400 text-sm hover:text-white transition">Brokers</Link>
+          <Link href="/pricing" className="text-slate-400 text-sm hover:text-white transition">Pricing</Link>
           {user ? (
             <Link href="/dashboard" className="bg-cyan-400 text-[#0a0f1e] font-bold px-5 py-2 rounded-full text-sm uppercase tracking-wide hover:bg-cyan-300 transition">
               Dashboard
