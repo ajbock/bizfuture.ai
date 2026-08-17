@@ -5,49 +5,27 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "")
 
 export async function POST(req: NextRequest) {
   try {
-    const { plan } = await req.json()
+    const { plan, email } = await req.json()
 
-    const plans: any = {
-      basic: {
-        name: "Basic Listing",
-        price: 999,
-        description: "1 listing for 30 days"
-      },
-      premium: {
-        name: "Premium Listing",
-        price: 2999,
-        description: "Featured listing + AI optimization for 30 days"
-      },
-      broker: {
-        name: "Broker Monthly",
-        price: 9999,
-        description: "Up to 20 listings per month"
-      }
+    const priceIds: any = {
+      basic: process.env.STRIPE_BASIC_PRICE_ID,
+      premium: process.env.STRIPE_PREMIUM_PRICE_ID,
+      broker: process.env.STRIPE_BROKER_PRICE_ID,
     }
 
-    const selected = plans[plan]
-    if (!selected) {
+    const priceId = priceIds[plan]
+    if (!priceId) {
       return NextResponse.json({ error: "Invalid plan" }, { status: 400 })
     }
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      line_items: [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: selected.name,
-              description: selected.description,
-            },
-            unit_amount: selected.price,
-          },
-          quantity: 1,
-        },
-      ],
-      mode: "payment",
-      success_url: `${req.headers.get("origin")}/listings?payment=success`,
-      cancel_url: `${req.headers.get("origin")}/pricing?payment=cancelled`,
+      line_items: [{ price: priceId, quantity: 1 }],
+      mode: "subscription",
+      success_url: `${req.headers.get("origin")}/dashboard?subscription=success`,
+      cancel_url: `${req.headers.get("origin")}/pricing?cancelled=true`,
+      customer_email: email || undefined,
+      metadata: { plan }
     })
 
     return NextResponse.json({ url: session.url })
