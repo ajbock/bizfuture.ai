@@ -2,11 +2,27 @@
 import { redirect } from "next/navigation"
 import Link from "next/link"
 
+const tierLimits: any = { free: 1, basic: 3, premium: 10, broker: 999 }
+const tierColors: any = {
+  free: "text-slate-400",
+  basic: "text-cyan-400",
+  premium: "text-purple-400",
+  broker: "text-yellow-400"
+}
+
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-
   if (!user) redirect("/login")
+
+  const { data: dbUser } = await supabase
+    .from("users")
+    .select("subscription_tier")
+    .eq("email", user.email)
+    .single()
+
+  const tier = dbUser?.subscription_tier || "free"
+  const limit = tierLimits[tier] || 1
 
   const { data: listings } = await supabase
     .from("businesses")
@@ -22,7 +38,9 @@ export default async function DashboardPage() {
     inquiries?.filter(i => i.business_id === bizId).length ?? 0
 
   const totalInquiries = inquiries?.length ?? 0
+  const activeListings = listings?.filter(l => l.status === "active").length ?? 0
   const name = user.user_metadata?.name || user.email
+  const atLimit = activeListings >= limit
 
   return (
     <main className="min-h-screen bg-[#0a0f1e] text-white">
@@ -31,12 +49,10 @@ export default async function DashboardPage() {
           <Link href="/" className="text-xl font-black">Biz<span className="text-cyan-400">Future</span>.ai</Link>
           <div className="flex items-center gap-4">
             <span className="text-slate-400 text-sm">Welcome, {name}</span>
-            <Link href="/listings/new" className="bg-cyan-400 text-[#0a0f1e] font-bold px-4 py-2 rounded-full text-sm uppercase tracking-wide hover:bg-cyan-300 transition">
+            <Link href="/listings/new" className={atLimit ? "bg-slate-600 text-slate-400 font-bold px-4 py-2 rounded-full text-sm uppercase tracking-wide cursor-not-allowed" : "bg-cyan-400 text-[#0a0f1e] font-bold px-4 py-2 rounded-full text-sm uppercase tracking-wide hover:bg-cyan-300 transition"}>
               Post Ad
             </Link>
-            <Link href="/auth/signout" className="text-slate-400 text-sm hover:text-white transition">
-              Sign Out
-            </Link>
+            <Link href="/auth/signout" className="text-slate-400 text-sm hover:text-white transition">Sign Out</Link>
           </div>
         </div>
       </div>
@@ -44,24 +60,42 @@ export default async function DashboardPage() {
       <div className="max-w-5xl mx-auto px-6 pb-16">
         <h1 className="text-3xl font-black text-white mb-8">My Dashboard</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
           <div className="bg-[#111827] border border-[#1e2d45] rounded-2xl p-6 text-center">
-            <div className="text-3xl font-black text-cyan-400">{listings?.length ?? 0}</div>
-            <div className="text-slate-400 text-sm mt-1">Active Listings</div>
+            <div className={"text-3xl font-black " + tierColors[tier]}>{tier.charAt(0).toUpperCase() + tier.slice(1)}</div>
+            <div className="text-slate-400 text-sm mt-1">Current Plan</div>
+          </div>
+          <div className="bg-[#111827] border border-[#1e2d45] rounded-2xl p-6 text-center">
+            <div className="text-3xl font-black text-cyan-400">{activeListings}/{limit === 999 ? "∞" : limit}</div>
+            <div className="text-slate-400 text-sm mt-1">Listings Used</div>
           </div>
           <div className="bg-[#111827] border border-[#1e2d45] rounded-2xl p-6 text-center">
             <div className="text-3xl font-black text-cyan-400">{totalInquiries}</div>
             <div className="text-slate-400 text-sm mt-1">Total Inquiries</div>
           </div>
           <div className="bg-[#111827] border border-[#1e2d45] rounded-2xl p-6 text-center">
-            <div className="text-3xl font-black text-cyan-400">Free</div>
-            <div className="text-slate-400 text-sm mt-1">Current Plan</div>
+            <div className="text-3xl font-black text-cyan-400">{listings?.length ?? 0}</div>
+            <div className="text-slate-400 text-sm mt-1">Total Listings</div>
           </div>
         </div>
 
+        {atLimit && (
+          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-2xl p-6 mb-8 flex items-center justify-between">
+            <div>
+              <h3 className="text-yellow-400 font-bold mb-1">Listing Limit Reached</h3>
+              <p className="text-slate-400 text-sm">You have used all {limit} listing{limit !== 1 ? "s" : ""} on your {tier} plan. Upgrade to post more.</p>
+            </div>
+            <Link href="/pricing" className="bg-yellow-400 text-[#0a0f1e] font-bold px-6 py-3 rounded-full text-sm uppercase tracking-wide hover:bg-yellow-300 transition whitespace-nowrap ml-4">
+              Upgrade Now
+            </Link>
+          </div>
+        )}
+
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-white">My Listings</h2>
-          <Link href="/listings/new" className="text-cyan-400 text-sm hover:underline">+ Post New Listing</Link>
+          {!atLimit && (
+            <Link href="/listings/new" className="text-cyan-400 text-sm hover:underline">+ Post New Listing</Link>
+          )}
         </div>
 
         {listings && listings.length > 0 ? (
@@ -104,17 +138,19 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        <div className="mt-10 bg-[#111827] border border-cyan-400/20 rounded-2xl p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-white font-bold mb-1">Upgrade Your Plan</h3>
-              <p className="text-slate-400 text-sm">Get featured placement AI optimization and buyer matching alerts</p>
+        {tier === "free" && (
+          <div className="mt-10 bg-[#111827] border border-cyan-400/20 rounded-2xl p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-white font-bold mb-1">Upgrade Your Plan</h3>
+                <p className="text-slate-400 text-sm">Get more listings, AI optimization, social media posting and buyer matching alerts</p>
+              </div>
+              <Link href="/pricing" className="bg-cyan-400 text-[#0a0f1e] font-bold px-6 py-3 rounded-full text-sm uppercase tracking-wide hover:bg-cyan-300 transition whitespace-nowrap">
+                View Plans
+              </Link>
             </div>
-            <Link href="/pricing" className="bg-cyan-400 text-[#0a0f1e] font-bold px-6 py-3 rounded-full text-sm uppercase tracking-wide hover:bg-cyan-300 transition whitespace-nowrap">
-              View Plans
-            </Link>
           </div>
-        </div>
+        )}
       </div>
     </main>
   )
