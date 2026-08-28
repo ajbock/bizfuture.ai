@@ -19,13 +19,11 @@ export default function LoginPage() {
     if (!form.email || !form.password) return setError("Email and password required")
     setLoading(true)
     setError("")
-
     const supabase = createClient()
     const { error } = await supabase.auth.signInWithPassword({
       email: form.email,
       password: form.password,
     })
-
     if (error) { setError(error.message); setLoading(false) }
     else router.push("/dashboard")
   }
@@ -50,13 +48,19 @@ export default function LoginPage() {
           <div className="flex flex-col gap-4">
             <div>
               <label className={labelClass}>Email</label>
-              <input name="email" type="email" value={form.email} onChange={handle} placeholder="john@email.com" className={inputClass} />
+              <input name="email" type="email" value={form.email} onChange={handle}
+                placeholder="john@email.com" className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>Password</label>
-              <input name="password" type="password" value={form.password} onChange={handle} placeholder="Your password" className={inputClass} />
+              <div className="flex items-center justify-between mb-2">
+                <label className={labelClass + " mb-0"}>Password</label>
+                <Link href="/reset-password" className="text-cyan-400 text-xs hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
+              <input name="password" type="password" value={form.password} onChange={handle}
+                placeholder="Your password" className={inputClass} />
             </div>
-
             <button onClick={submit} disabled={loading}
               className="w-full bg-cyan-400 text-[#0a0f1e] font-black py-4 rounded-xl text-sm uppercase tracking-wide hover:bg-cyan-300 transition disabled:opacity-50 mt-2">
               {loading ? "Signing in..." : "Sign In"}
