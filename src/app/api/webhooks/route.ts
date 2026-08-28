@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import Stripe from "stripe"
 import { createClient } from "@supabase/supabase-js"
 
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   )
 
   if (event.type === "checkout.session.completed") {
-    const session = event.data.object as Stripe.CheckoutSession
+    const session = event.data.object as Stripe.Checkout.Session
     const plan = session.metadata?.plan
     const email = session.customer_email
 
