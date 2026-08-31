@@ -2,6 +2,7 @@
 import { notFound } from "next/navigation"
 import { createClient } from "@supabase/supabase-js"
 import MatchedBuyers from "./MatchedBuyers"
+import DealAnalysis from "./DealAnalysis"
 import InquiryForm from "./InquiryForm"
 
 export default async function ListingPage({ params }: { params: Promise<{ id: string }> }) {
@@ -93,6 +94,9 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
             </div>
 
             <MatchedBuyers businessId={biz.id} />
+            {biz.asking_price && (
+              <DealAnalysis askingPrice={Number(biz.asking_price)} cashFlow={Number(biz.cash_flow)} annualRevenue={biz.annual_revenue ? Number(biz.annual_revenue) : undefined} />
+            )}
 
           </div>
 
