@@ -87,7 +87,7 @@ export default function BrokerSignupPage() {
           {[
             { label: "Up to 20 listings", icon: "📋" },
             { label: "AI buyer matching", icon: "🤖" },
-            { label: "$99/month", icon: "💰" },
+            { label: "4 Months Free", icon: "💰" },
           ].map(({ label, icon }) => (
             <div key={label} className="bg-[#111827] border border-purple-500/20 rounded-2xl p-4 text-center">
               <div className="text-2xl mb-2">{icon}</div>
@@ -141,7 +141,7 @@ export default function BrokerSignupPage() {
         </button>
 
         <p className="text-center text-slate-500 text-xs mt-4">
-          After approval you will be contacted to set up your $99/month subscription
+          After approval you will be contacted to set up your Free for 4 months subscription
         </p>
       </div>
     </main>
