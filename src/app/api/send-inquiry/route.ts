@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { Resend } from "resend"
 import { createClient } from "@supabase/supabase-js"
 
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
 
     if (business.email) {
       await resend.emails.send({
-        from: "BizFuture.ai <onboarding@resend.dev>",
+        from: "BizFuture.ai <info@bizfuture.ai>",
         to: business.email,
         subject: "New Inquiry: " + business.title,
         html: `
@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
     }
 
     await resend.emails.send({
-	from: "BizFuture.ai <onboarding@resend.dev>",
+	from: "BizFuture.ai <info@bizfuture.ai>",
       to: email,
       subject: "Your inquiry has been sent - " + business.title,
       html: `
