@@ -18,6 +18,10 @@ export default function BuyerRegistrationPage() {
     financing_prequalified: false,
     industries: [] as string[],
     preferred_states: [] as string[],
+    liquid_assets: "",
+    non_liquid_assets: "",
+    loan_approved_amount: "",
+    seeking_seller_financing: false,
   })
 
   const handle = (e: any) => {
@@ -57,6 +61,10 @@ export default function BuyerRegistrationPage() {
       financing_prequalified: form.financing_prequalified,
       industries: form.industries,
       preferred_states: form.preferred_states,
+      liquid_assets: form.liquid_assets ? Number(form.liquid_assets.replace(/,/g, "")) : null,
+      non_liquid_assets: form.non_liquid_assets ? Number(form.non_liquid_assets.replace(/,/g, "")) : null,
+      loan_approved_amount: form.loan_approved_amount ? Number(form.loan_approved_amount.replace(/,/g, "")) : null,
+      seeking_seller_financing: form.seeking_seller_financing,
     }])
     if (error) { setError(error.message); setLoading(false) }
     else { setSuccess(true); setLoading(false) }
@@ -98,7 +106,7 @@ export default function BuyerRegistrationPage() {
           <h2 className="text-lg font-bold text-white mb-4">Your Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div><label className={labelClass}>Full Name *</label><input name="name" value={form.name} onChange={handle} placeholder="John Smith" className={inputClass} /></div>
-            <div><label className={labelClass}>Email *</label><input name="email" value={form.email} onChange={handle} placeholder="john@email.com" className={inputClass} /></div>
+            <div><label className={labelClass}>Email *</label><input name="email" type="email" value={form.email} onChange={handle} placeholder="john@email.com" className={inputClass} /></div>
             <div><label className={labelClass}>Phone</label><input name="phone" value={form.phone} onChange={handle} placeholder="555-123-4567" className={inputClass} /></div>
           </div>
         </div>
@@ -118,13 +126,36 @@ export default function BuyerRegistrationPage() {
         <div className={sectionClass}>
           <h2 className="text-lg font-bold text-white mb-4">Budget Range</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div><label className={labelClass}>Minimum Budget ($USD)</label><input name="budget_min" value={form.budget_min} onChange={handle} placeholder="e.g. 100000" className={inputClass} /></div>
-            <div><label className={labelClass}>Maximum Budget ($USD)</label><input name="budget_max" value={form.budget_max} onChange={handle} placeholder="e.g. 500000" className={inputClass} /></div>
+            <div><label className={labelClass}>Minimum Budget ($USD)</label><input name="budget_min" value={form.budget_min} onChange={handle} placeholder="e.g. 100,000" className={inputClass} /></div>
+            <div><label className={labelClass}>Maximum Budget ($USD)</label><input name="budget_max" value={form.budget_max} onChange={handle} placeholder="e.g. 500,000" className={inputClass} /></div>
           </div>
-          <div className="mt-4">
+        </div>
+
+        <div className={sectionClass}>
+          <h2 className="text-lg font-bold text-white mb-4">Financial Qualification</h2>
+          <p className="text-slate-400 text-xs mb-4">This helps us match you with listings that fit your financial profile. All information is kept private.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className={labelClass}>Liquid Assets — Cash + Stocks ($USD)</label>
+              <input name="liquid_assets" value={form.liquid_assets} onChange={handle} placeholder="e.g. 150,000" className={inputClass} />
+            </div>
+            <div>
+              <label className={labelClass}>Non-Liquid Assets — Real Estate ($USD)</label>
+              <input name="non_liquid_assets" value={form.non_liquid_assets} onChange={handle} placeholder="e.g. 500,000" className={inputClass} />
+            </div>
+            <div>
+              <label className={labelClass}>Business Loan Pre-Approved Amount ($USD)</label>
+              <input name="loan_approved_amount" value={form.loan_approved_amount} onChange={handle} placeholder="e.g. 400,000" className={inputClass} />
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
             <label className="flex items-center gap-3 cursor-pointer">
               <input type="checkbox" name="financing_prequalified" checked={form.financing_prequalified} onChange={handle} className="w-4 h-4 accent-cyan-400" />
-              <span className="text-sm text-slate-300">I am pre-qualified for financing</span>
+              <span className="text-sm text-slate-300">I am pre-qualified for SBA or bank financing</span>
+            </label>
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" name="seeking_seller_financing" checked={form.seeking_seller_financing} onChange={handle} className="w-4 h-4 accent-cyan-400" />
+              <span className="text-sm text-slate-300">I am seeking seller financing</span>
             </label>
           </div>
         </div>

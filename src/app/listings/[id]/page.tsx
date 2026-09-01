@@ -2,6 +2,7 @@
 import { notFound } from "next/navigation"
 import { createClient } from "@supabase/supabase-js"
 import MatchedBuyers from "./MatchedBuyers"
+import { createClient as createServerClient } from "@/lib/supabase-server"
 import DealAnalysis from "./DealAnalysis"
 import InquiryForm from "./InquiryForm"
 
@@ -11,6 +12,13 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
     process.env.NEXT_PUBLIC_SUPABASE_URL || "",
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
   )
+  const serverSupabase = await createServerClient()
+  const { data: { user } } = await serverSupabase.auth.getUser()
+  let isBroker = false
+  if (user) {
+    const { data: dbUser } = await supabase.from("users").select("subscription_tier").eq("email", user.email ?? "").single()
+    isBroker = dbUser?.subscription_tier === "broker"
+  }
 
   const { data: biz, error } = await supabase
     .from("businesses")
@@ -93,7 +101,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
               </div>
             </div>
 
-            <MatchedBuyers businessId={biz.id} />
+            {isBroker && <MatchedBuyers businessId={biz.id} />}
             {biz.asking_price && (
               <DealAnalysis askingPrice={Number(biz.asking_price)} cashFlow={Number(biz.cash_flow)} annualRevenue={biz.annual_revenue ? Number(biz.annual_revenue) : undefined} />
             )}

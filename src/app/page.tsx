@@ -29,9 +29,9 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-[#0a0f1e] text-white">
-      <nav className="px-6 py-4 flex items-center justify-between max-w-6xl mx-auto">
+      <nav className="px-4 py-4 flex items-center justify-between max-w-6xl mx-auto w-full">
         <span className="text-xl font-black">Biz<span className="text-cyan-400">Future</span>.ai</span>
-        <div className="flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-4">
           <Link href="/listings" className="text-slate-400 text-sm hover:text-white transition">Browse</Link>
           <Link href="/broker" className="text-slate-400 text-sm hover:text-white transition">Brokers</Link>
           <Link href="/pricing" className="text-slate-400 text-sm hover:text-white transition">Pricing</Link>
@@ -45,7 +45,8 @@ export default async function Home() {
             </>
           )}
         </div>
-      </nav>
+        <Link href="/listings" className="md:hidden bg-cyan-400 text-[#0a0f1e] font-bold px-4 py-2 rounded-full text-xs uppercase tracking-wide">Browse</Link>
+</nav>
 
       <div className="max-w-6xl mx-auto px-6 pt-16 pb-12 text-center">
         <div className="inline-flex items-center gap-2 bg-cyan-400/10 border border-cyan-400/20 px-4 py-2 rounded-full mb-6">

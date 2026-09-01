@@ -185,7 +185,6 @@ export default function NewListingPage() {
           <h2 className="text-lg font-bold text-white mb-4">Location</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div><label className={labelClass}>City</label><input name="city" value={form.city} onChange={handle} placeholder="e.g. Chicago" className={inputClass} /></div>
-            <div><label className={labelClass}>County</label><input name="county" value={form.county} onChange={handle} placeholder="e.g. Cook County" className={inputClass} /></div>
             <div><label className={labelClass}>State</label>
               <select name="state" value={form.state} onChange={handle} className={inputClass}>
                 <option value="">Select State</option>

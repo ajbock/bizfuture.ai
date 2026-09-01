@@ -1,6 +1,7 @@
 ﻿import { createClient } from "@/lib/supabase-server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import ManageSubscription from "./ManageSubscription"
 
 const tierLimits: any = { free: 1, basic: 3, premium: 10, broker: 999 }
 const tierColors: any = {
@@ -138,6 +139,9 @@ export default async function DashboardPage() {
           </div>
         )}
 
+        {tier !== "free" && (
+          <ManageSubscription />
+        )}
         {tier === "free" && (
           <div className="mt-10 bg-[#111827] border border-cyan-400/20 rounded-2xl p-6">
             <div className="flex items-center justify-between">
