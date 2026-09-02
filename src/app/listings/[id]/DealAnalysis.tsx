@@ -5,10 +5,11 @@ import { useState } from "react"
 interface DealAnalysisProps {
   askingPrice: number
   cashFlow?: number
+  defaultCashFlow?: number
   annualRevenue?: number
 }
 
-export default function DealAnalysis({ askingPrice, cashFlow, annualRevenue }: DealAnalysisProps) {
+export default function DealAnalysis({ askingPrice, cashFlow = 0, annualRevenue }: DealAnalysisProps) {
   const [downPct, setDownPct] = useState(10)
   const [rate, setRate] = useState(7)
   const [years, setYears] = useState(10)
