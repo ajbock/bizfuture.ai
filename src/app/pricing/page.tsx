@@ -8,8 +8,8 @@ const plans = [
     id: "basic",
     name: "Basic",
     price: "Free",
-    period: "limited time offer",
-    description: "Free for a limited time",
+    period: "",
+    description: "Get started for free",
     features: [
       "Up to 3 listings per month",
       "Standard search placement",
@@ -43,8 +43,8 @@ const plans = [
     id: "broker",
     name: "Broker",
     price: "Free",
-    period: "first 4 months",
-    description: "Then $99.99/month",
+    period: "",
+    description: "",
     features: [
       "Unlimited listings",
       "All Premium features",
@@ -56,7 +56,7 @@ const plans = [
     ],
     color: "border-purple-500/50",
     buttonColor: "border border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white",
-    badge: "4 Months Free"
+    badge: "Business Broker"
   }
 ]
 
@@ -111,7 +111,7 @@ export default function PricingPage() {
             <div key={plan.id} className={"bg-[#111827] border-2 rounded-2xl p-8 flex flex-col relative " + plan.color}>
               {plan.badge && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className={"text-xs font-black px-4 py-2 rounded-full uppercase tracking-wide " + (plan.badge === "Free Now" ? "bg-green-400 text-[#0a0f1e]" : plan.badge === "4 Months Free" ? "bg-purple-400 text-white" : "bg-cyan-400 text-[#0a0f1e]")}>
+                  <span className={"text-xs font-black px-4 py-2 rounded-full uppercase tracking-wide " + (plan.badge === "Free Now" ? "bg-green-400 text-[#0a0f1e]" : plan.badge === "Business Broker" ? "bg-purple-400 text-white" : "bg-cyan-400 text-[#0a0f1e]")}>
                     {plan.badge}
                   </span>
                 </div>
@@ -141,7 +141,7 @@ export default function PricingPage() {
                 disabled={loading === plan.id}
                 className={"w-full py-3 rounded-xl font-black text-sm uppercase tracking-wide transition disabled:opacity-50 " + plan.buttonColor}
               >
-                {loading === plan.id ? "Loading..." : plan.id === "basic" ? "Get Started Free" : plan.id === "broker" ? "Apply Free" : "Get Started"}
+                {loading === plan.id ? "Loading..." : plan.id === "basic" ? "Get Started Free" : plan.id === "broker" ? "Get Started Free" : "Get Started"}
               </button>
             </div>
           ))}

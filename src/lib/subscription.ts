@@ -4,7 +4,8 @@ const tierLimits: any = {
   free: 1,
   basic: 3,
   premium: 10,
-  broker: 999
+  broker: 999,
+directory: 999
 }
 
 export async function getListingLimit(email: string): Promise<number> {

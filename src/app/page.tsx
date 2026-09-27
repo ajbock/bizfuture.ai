@@ -4,7 +4,7 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "BizFuture.ai - Businesses For Sale | AI-Powered Marketplace",
-  description: "Browse 500+ businesses for sale across the USA. AI-powered buyer matching and listing creation.",
+  description: "Browse businesses for sale across the USA. AI-powered search and ad creation.",
 }
 
 export default async function Home() {
@@ -54,7 +54,7 @@ export default async function Home() {
           <span className="text-cyan-400 text-sm font-semibold uppercase tracking-widest">AI-Powered Business Marketplace</span>
         </div>
         <h1 className="text-5xl md:text-7xl font-black text-white mb-4 leading-tight">Find Your Next<br /><span className="text-cyan-400">Business</span></h1>
-        <p className="text-lg text-slate-400 max-w-xl mx-auto mb-10">Browse {count?.toLocaleString()}+ businesses for sale across the USA. AI-powered matching finds the right buyer for every listing.</p>
+        <p className="text-lg text-slate-400 max-w-xl mx-auto mb-10">Browse businesses for sale across the USA. AI-powered search and ad creation.</p>
 
         <form action="/listings" method="GET" className="bg-[#111827] border border-[#1e2d45] rounded-2xl p-6 max-w-4xl mx-auto mb-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">

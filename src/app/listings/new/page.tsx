@@ -1,12 +1,12 @@
 ﻿"use client"
 
-import { useState } from "react"
-import { supabase } from "@/lib/supabase"
+import { useState, useEffect } from "react"
+import { createClient } from "@/lib/supabase-browser"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import ImageUpload from "@/components/ImageUpload"
 
-const states = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"]
+const states = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","NorthDakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"]
 const industries = ["Agriculture","Automotive","Beauty","Building & Construction","Communication & Media","Financial Services","Health Care & Fitness","Manufacturing","Office","Other","Pet Services","Restaurants & Food","Retail","Service","Technology & Website","Transportation & Storage","Travel","Wholesale & Distributors"]
 const years = Array.from({length: 86}, (_, i) => 2035 - i)
 const reasonsForSelling = ["Retirement","Moving to other ventures","Health Reasons","Financial Issues / Bankruptcy","Relocating","Lease Ending / Location Issue","Other"]
@@ -17,13 +17,40 @@ export default function NewListingPage() {
   const [aiLoading, setAiLoading] = useState(false)
   const [error, setError] = useState("")
   const [images, setImages] = useState<string[]>([])
+  const [userEmail, setUserEmail] = useState("")
+  const [checkingAuth, setCheckingAuth] = useState(true)
   const [form, setForm] = useState({
     title: "", description: "", listing_type: "For Sale", industry: "",
     asking_price: "", cash_flow: "", annual_revenue: "", ebitda: "",
     inventory_value: "", established_year: "", employees: "", real_estate: "",
     reason_for_selling: "", financing_available: false, training_available: false,
-    city: "", county: "", state: "", phone: "", email: "", website: "",
+    city: "", county: "", state: "", phone: "", website: "",
   })
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        router.push("/login")
+        return
+      }
+      setUserEmail(user.email || "")
+
+      const { data: broker } = await supabase
+        .from("brokers")
+        .select("phone, website")
+        .eq("email", user.email)
+        .single()
+
+      if (broker) {
+        setForm(f => ({ ...f, phone: broker.phone || f.phone, website: broker.website || f.website }))
+      }
+
+      setCheckingAuth(false)
+    }
+    checkAuth()
+  }, [router])
 
   const handle = (e: any) => {
     const { name, value, type, checked } = e.target
@@ -51,11 +78,15 @@ export default function NewListingPage() {
 
   const submit = async () => {
     if (!form.title) return setError("Business title is required")
+    if (!userEmail) return setError("You must be logged in to post a listing")
     setLoading(true)
     setError("")
+    const supabase = createClient()
     const { error } = await supabase.from("businesses").insert([{
       ...form,
+      email: userEmail,
       images,
+      status: "active",
       asking_price: form.asking_price ? Number(form.asking_price.replace(/,/g, "")) : null,
       cash_flow: form.cash_flow ? Number(form.cash_flow.replace(/,/g, "")) : null,
       annual_revenue: form.annual_revenue ? Number(form.annual_revenue.replace(/,/g, "")) : null,
@@ -71,6 +102,14 @@ export default function NewListingPage() {
   const inputClass = "w-full bg-[#0a0f1e] border border-[#1e2d45] rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 text-sm"
   const labelClass = "block text-sm font-semibold text-slate-300 mb-2"
   const sectionClass = "bg-[#111827] border border-[#1e2d45] rounded-2xl p-6 mb-6"
+
+  if (checkingAuth) {
+    return (
+      <main className="min-h-screen bg-[#0a0f1e] text-white flex items-center justify-center">
+        <p className="text-slate-400">Loading...</p>
+      </main>
+    )
+  }
 
   return (
     <main className="min-h-screen bg-[#0a0f1e] text-white">
@@ -184,9 +223,9 @@ export default function NewListingPage() {
         <div className={sectionClass}>
           <h2 className="text-lg font-bold text-white mb-4">Location</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div><label className={labelClass}>City</label><input name="city" value={form.city} onChange={handle} placeholder="e.g. Chicago" className={inputClass} /></div>
+            <div><label className={labelClass}>City</label><input name="city" autoComplete="address-level2" value={form.city} onChange={handle} placeholder="e.g. Chicago" className={inputClass} /></div>
             <div><label className={labelClass}>State</label>
-              <select name="state" value={form.state} onChange={handle} className={inputClass}>
+              <select name="state" autoComplete="address-level1" value={form.state} onChange={handle} className={inputClass}>
                 <option value="">Select State</option>
                 {states.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
@@ -196,10 +235,10 @@ export default function NewListingPage() {
 
         <div className={sectionClass}>
           <h2 className="text-lg font-bold text-white mb-4">Contact Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div><label className={labelClass}>Phone</label><input name="phone" value={form.phone} onChange={handle} placeholder="e.g. 555-123-4567" className={inputClass} /></div>
-            <div><label className={labelClass}>Email</label><input name="email" value={form.email} onChange={handle} placeholder="e.g. owner@business.com" className={inputClass} /></div>
-            <div><label className={labelClass}>Website</label><input name="website" value={form.website} onChange={handle} placeholder="e.g. www.mybusiness.com" className={inputClass} /></div>
+          <p className="text-slate-500 text-xs mb-4">Buyer inquiries go to your account email ({userEmail}). Phone and website below are shown on the listing.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label className={labelClass}>Phone</label><input name="phone" autoComplete="tel" value={form.phone} onChange={handle} placeholder="e.g. 555-123-4567" className={inputClass} /></div>
+            <div><label className={labelClass}>Website</label><input name="website" autoComplete="url" value={form.website} onChange={handle} placeholder="e.g. www.mybusiness.com" className={inputClass} /></div>
           </div>
         </div>
 

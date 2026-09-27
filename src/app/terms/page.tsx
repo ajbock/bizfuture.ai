@@ -53,7 +53,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-xl font-bold text-white mb-3">5. AI-Generated Content</h2>
-            <p>Our platform uses Anthropic Claude AI to assist with listing description generation. AI-generated content is provided as a starting point and may not be perfectly accurate. Sellers are responsible for reviewing and verifying all AI-generated content before publishing. BizFuture.ai is not liable for errors in AI-generated descriptions.</p>
+            <p>This platform may use artificial intelligence tools to assist with generating listing descriptions and other content. AI-generated content is provided as a starting point only and may not be fully accurate. Users are responsible for reviewing and verifying all AI-generated content before publishing. BizFuture.ai is not liable for errors, omissions, or inaccuracies in AI-generated content.</p>
           </section>
 
           <section>
@@ -76,8 +76,9 @@ export default function TermsPage() {
               <li>Provide legal, financial, or investment advice</li>
               <li>Guarantee the completion of any transaction</li>
               <li>Act as an escrow or intermediary in transactions</li>
+              <li>Verify the accuracy of information provided by brokers listed in our Broker Directory</li>
             </ul>
-            <p className="mt-3">All buyers should conduct independent due diligence before purchasing any business. We strongly recommend working with licensed brokers, attorneys, and accountants.</p>
+            <p className="mt-3">Information about brokers represented on BizFuture.ai is provided by the brokers themselves and may not be accurate. Velocifuture LLC is not a licensed business broker and does not provide brokerage services. All buyers should conduct independent due diligence before purchasing any business. We strongly recommend working with licensed brokers, attorneys, and accountants.</p>
           </section>
 
           <section>

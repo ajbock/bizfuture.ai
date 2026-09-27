@@ -3,12 +3,13 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 import ManageSubscription from "./ManageSubscription"
 
-const tierLimits: any = { free: 1, basic: 3, premium: 10, broker: 999 }
+const tierLimits: any = { free: 1, basic: 3, premium: 10, broker: 999, directory: 999 }
 const tierColors: any = {
   free: "text-slate-400",
   basic: "text-cyan-400",
   premium: "text-purple-400",
-  broker: "text-yellow-400"
+  broker: "text-yellow-400",
+  directory: "text-orange-400"
 }
 
 export default async function DashboardPage() {
@@ -139,7 +140,7 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        {tier !== "free" && (
+        {["basic","premium","broker"].includes(tier) && (
           <ManageSubscription />
         )}
         {tier === "free" && (
@@ -153,6 +154,12 @@ export default async function DashboardPage() {
                 View Plans
               </Link>
             </div>
+          </div>
+        )}
+        {tier === "directory" && (
+          <div className="mt-10 bg-[#111827] border border-orange-400/20 rounded-2xl p-6">
+            <h3 className="text-white font-bold mb-1">Free Broker Directory Plan</h3>
+            <p className="text-slate-400 text-sm">You have unlimited free listings as part of the broker directory. <Link href="/broker/profile" className="text-orange-400 hover:underline">Edit your public broker profile</Link>.</p>
           </div>
         )}
       </div>
