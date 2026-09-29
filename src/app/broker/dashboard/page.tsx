@@ -1,18 +1,16 @@
 ﻿import { createClient } from "@/lib/supabase-server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import { getAdminClient } from "@/lib/supabase-admin"
 
 export default async function BrokerDashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect("/login")
 
-  const db = require("@supabase/supabase-js").createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-  )
+  const db = getAdminClient()
 
-  const { data: dbUser } = await db.from("users").select("subscription_tier").eq("email", user.email).single()
+  const { data: dbUser } = await db.from("users").select("subscription_tier").ilike("email", user.email ?? "").maybeSingle()
   if (dbUser?.subscription_tier !== "broker") redirect("/dashboard")
 
   const { data: listings } = await db

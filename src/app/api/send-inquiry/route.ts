@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
 import { Resend } from "resend"
-import { createClient } from "@supabase/supabase-js"
+import { getAdminClient } from "@/lib/supabase-admin"
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-    )
+    const supabase = getAdminClient()
 
     const { business_id, name, email, phone, message } = await req.json()
 

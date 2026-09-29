@@ -1,4 +1,4 @@
-﻿import { createClient } from "@supabase/supabase-js"
+﻿import { getAdminClient } from "@/lib/supabase-admin"
 
 const tierLimits: any = {
   free: 1,
@@ -9,47 +9,38 @@ directory: 999
 }
 
 export async function getListingLimit(email: string): Promise<number> {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-  )
+  const supabase = getAdminClient()
 
   const { data } = await supabase
     .from("users")
     .select("subscription_tier")
-    .eq("email", email)
-    .single()
+    .ilike("email", email)
+    .maybeSingle()
 
   const tier = data?.subscription_tier || "free"
   return tierLimits[tier] || 1
 }
 
 export async function getUserTier(email: string): Promise<string> {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-  )
+  const supabase = getAdminClient()
 
   const { data } = await supabase
     .from("users")
     .select("subscription_tier")
-    .eq("email", email)
-    .single()
+    .ilike("email", email)
+    .maybeSingle()
 
   return data?.subscription_tier || "free"
 }
 
 export async function checkListingLimit(email: string): Promise<{ allowed: boolean; current: number; limit: number; tier: string }> {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-  )
+  const supabase = getAdminClient()
 
   const { data: user } = await supabase
     .from("users")
     .select("subscription_tier")
-    .eq("email", email)
-    .single()
+    .ilike("email", email)
+    .maybeSingle()
 
   const tier = user?.subscription_tier || "free"
   const limit = tierLimits[tier] || 1

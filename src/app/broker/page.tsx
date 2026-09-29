@@ -141,7 +141,7 @@ export default function BrokerSignupPage() {
     // Give them the free, unlimited-listing "directory" tier — separate from the paid "broker" tier
     const { error: userError } = await supabase
       .from("users")
-      .upsert({ email: form.email, subscription_tier: "directory" }, { onConflict: "email" })
+      .upsert({ email: form.email, subscription_tier: "directory" }, { onConflict: "email", ignoreDuplicates: true })
 
     if (userError) {
       console.error("Failed to set directory tier:", userError.message)
@@ -164,7 +164,7 @@ export default function BrokerSignupPage() {
       languages: form.languages,
       areas_served: form.areas_served,
       profile_slug,
-      status: "approved"
+      status: "pending" // admin approves in /admin/brokers (RLS only allows pending inserts)
     }])
 
     if (brokerError) {

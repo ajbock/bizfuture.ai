@@ -2,6 +2,7 @@
 import { notFound } from "next/navigation"
 import { createClient } from "@supabase/supabase-js"
 import MatchedBuyers from "./MatchedBuyers"
+import { getAdminClient } from "@/lib/supabase-admin"
 import { createClient as createServerClient } from "@/lib/supabase-server"
 import DealAnalysis from "./DealAnalysis"
 import InquiryForm from "./InquiryForm"
@@ -16,7 +17,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
   const { data: { user } } = await serverSupabase.auth.getUser()
   let isBroker = false
   if (user) {
-    const { data: dbUser } = await supabase.from("users").select("subscription_tier").eq("email", user.email ?? "").single()
+    const { data: dbUser } = await getAdminClient().from("users").select("subscription_tier").eq("email", user.email ?? "").single()
     isBroker = dbUser?.subscription_tier === "broker"
   }
 

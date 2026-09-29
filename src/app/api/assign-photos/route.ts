@@ -1,5 +1,5 @@
 ﻿import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+import { getAdminClient, isAdminUser } from "@/lib/supabase-admin"
 
 const industrySearchTerms: any = {
   "Restaurants & Food": ["restaurant interior", "cafe business", "food restaurant", "dining restaurant", "kitchen restaurant"],
@@ -20,11 +20,9 @@ const industrySearchTerms: any = {
 }
 
 export async function POST(req: NextRequest) {
+  if (!(await isAdminUser())) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-    )
+    const supabase = getAdminClient()
 
     const { industry, limit = 50 } = await req.json()
 

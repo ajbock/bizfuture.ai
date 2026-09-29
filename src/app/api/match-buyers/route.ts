@@ -1,12 +1,18 @@
 ﻿import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+import { getAdminClient, getSessionUser } from "@/lib/supabase-admin"
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-    )
+    const supabase = getAdminClient()
+
+    // Buyer contact details are for paid brokers only
+    const user = await getSessionUser()
+    if (!user?.email) return NextResponse.json({ error: "Not logged in" }, { status: 401 })
+    const { data: dbUser } = await supabase
+      .from("users").select("subscription_tier").ilike("email", user.email).maybeSingle()
+    if (dbUser?.subscription_tier !== "broker") {
+      return NextResponse.json({ error: "Broker plan required" }, { status: 403 })
+    }
 
     const { business_id } = await req.json()
 

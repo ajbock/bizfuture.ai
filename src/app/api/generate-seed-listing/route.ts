@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import Anthropic from "@anthropic-ai/sdk"
-import { createClient } from "@supabase/supabase-js"
+import { getAdminClient, isAdminUser } from "@/lib/supabase-admin"
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -53,6 +53,7 @@ function randomPrice(industry: string): { asking: number; cashflow: number; reve
 }
 
 export async function POST(req: NextRequest) {
+  if (!(await isAdminUser())) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   try {
     const { industry, state } = await req.json()
     const city = getCity(state)
@@ -95,10 +96,7 @@ No markdown, no backticks, just raw JSON.`
     const clean = text.trim().replace(/```json/g, "").replace(/```/g, "").trim()
     const parsed = JSON.parse(clean)
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
-    )
+    const supabase = getAdminClient()
 
     const realEstateOptions = ["Own", "Lease", "Included in Price"]
     const realEstate = realEstateOptions[Math.floor(Math.random() * realEstateOptions.length)]

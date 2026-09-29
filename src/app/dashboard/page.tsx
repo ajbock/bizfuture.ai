@@ -17,11 +17,24 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect("/login")
 
-  const { data: dbUser } = await supabase
+  let { data: dbUser } = await supabase
     .from("users")
     .select("subscription_tier")
     .eq("email", user.email)
-    .single()
+    .maybeSingle()
+
+  // Every login gets a users row. Accounts created through broker signup are
+  // marked role "broker" in auth metadata and get the free unlimited directory tier.
+  if (!dbUser) {
+    const isBroker = user.user_metadata?.role === "broker"
+    const newRow = {
+      email: user.email,
+      name: user.user_metadata?.name ?? null,
+      subscription_tier: isBroker ? "directory" : "free",
+    }
+    await supabase.from("users").upsert(newRow, { onConflict: "email", ignoreDuplicates: true })
+    dbUser = { subscription_tier: newRow.subscription_tier }
+  }
 
   const tier = dbUser?.subscription_tier || "free"
   const limit = tierLimits[tier] || 1

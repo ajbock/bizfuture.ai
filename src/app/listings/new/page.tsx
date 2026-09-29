@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import ImageUpload from "@/components/ImageUpload"
 
-const states = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","NorthDakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"]
+const states = ["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"]
 const industries = ["Agriculture","Automotive","Beauty","Building & Construction","Communication & Media","Financial Services","Health Care & Fitness","Manufacturing","Office","Other","Pet Services","Restaurants & Food","Retail","Service","Technology & Website","Transportation & Storage","Travel","Wholesale & Distributors"]
 const years = Array.from({length: 86}, (_, i) => 2035 - i)
 const reasonsForSelling = ["Retirement","Moving to other ventures","Health Reasons","Financial Issues / Bankruptcy","Relocating","Lease Ending / Location Issue","Other"]
@@ -81,6 +81,18 @@ export default function NewListingPage() {
     if (!userEmail) return setError("You must be logged in to post a listing")
     setLoading(true)
     setError("")
+    try {
+      const lim = await fetch("/api/check-limit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: userEmail }),
+      }).then(r => r.json())
+      if (lim && lim.allowed === false) {
+        setError("You have used all " + lim.limit + " listing(s) on your " + lim.tier + " plan. Upgrade to post more.")
+        setLoading(false)
+        return
+      }
+    } catch {}
     const supabase = createClient()
     const { error } = await supabase.from("businesses").insert([{
       ...form,

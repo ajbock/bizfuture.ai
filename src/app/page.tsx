@@ -180,7 +180,7 @@ export default async function Home() {
           </div>
 
           <div className="border-t border-[#1e2d45] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <span className="text-slate-600 text-sm">2027 BizFuture.ai - Velocifuture LLC</span>
+            <span className="text-slate-600 text-sm">2026 BizFuture.ai - Velocifuture LLC</span>
             <div className="flex gap-6">
               <Link href="/about" className="text-slate-500 text-sm hover:text-white transition">About</Link>
               <Link href="/pricing" className="text-slate-500 text-sm hover:text-white transition">Pricing</Link>

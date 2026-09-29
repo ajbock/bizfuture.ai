@@ -29,7 +29,8 @@ export default function AboutPage() {
         </div>
 
         <div className="bg-[#111827] border border-[#1e2d45] rounded-2xl p-8 mb-8">
-          <h2 className="text-2xl font-black text-white mb-6">What Makes Us Different</h2>
+          <h2 className="text-2xl font-black text-white mb-2">What Makes Us Different</h2>
+          <p className="text-cyan-400 text-sm font-semibold mb-6">A California based company.</p>
           <div className="flex flex-col gap-4">
             {[
               { icon: "AI", title: "AI Listing Assistant", desc: "AI writes your listing description instantly from your business details." },
