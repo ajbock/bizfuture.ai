@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState } from "react"
 
@@ -19,11 +19,17 @@ export default function DealAnalysis({ askingPrice, cashFlow = 0, annualRevenue 
   const loanAmount = askingPrice - downPayment
   const monthlyRate = rate / 100 / 12
   const numPayments = years * 12
-  const monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1)
+  // Guard the edge cases the sliders allow: no loan (100% down), 0-year term, 0% interest
+  const monthlyPayment =
+    loanAmount <= 0 || numPayments <= 0
+      ? 0
+      : monthlyRate === 0
+        ? loanAmount / numPayments
+        : loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1)
   const annualDebtService = monthlyPayment * 12
   const cashFlowAfterDebt = cashFlow - annualDebtService - ownerSalary
-  const dscr = cashFlow / annualDebtService
-  const roi = (cashFlowAfterDebt / downPayment) * 100
+  const dscr = annualDebtService > 0 ? cashFlow / annualDebtService : null
+  const roi = downPayment > 0 ? (cashFlowAfterDebt / downPayment) * 100 : null
   const priceToSDE = askingPrice / cashFlow
   const priceToRevenue = annualRevenue ? askingPrice / annualRevenue : null
 
@@ -47,34 +53,34 @@ export default function DealAnalysis({ askingPrice, cashFlow = 0, annualRevenue 
           </div>
         )}
         <div className="bg-[#0a0f1e] rounded-xl p-3">
-          <div className="text-xs text-slate-500 mb-1">DSCR</div>
-          <div className={"text-lg font-black " + (dscr >= 1.25 ? "text-green-400" : "text-red-400")}>{dscr.toFixed(2)}</div>
+          <div className="text-xs text-slate-500 mb-1">DSCR (Debt Service Coverage Ratio)</div>
+          <div className={"text-lg font-black " + (dscr === null ? "text-slate-400" : dscr >= 1.25 ? "text-green-400" : "text-red-400")}>{dscr === null ? "N/A" : dscr.toFixed(2)}</div>
         </div>
         <div className="bg-[#0a0f1e] rounded-xl p-3">
           <div className="text-xs text-slate-500 mb-1">Cash on Cash ROI</div>
-          <div className={"text-lg font-black " + good(roi)}>{roi.toFixed(1)}%</div>
+          <div className={"text-lg font-black " + (roi === null ? "text-slate-400" : good(roi))}>{roi === null ? "N/A" : roi.toFixed(1) + "%"}</div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div>
           <label className="text-xs text-slate-400 mb-1 block">Down Payment: {downPct}% ({fmt(downPayment)})</label>
-          <input type="range" min="5" max="50" value={downPct} onChange={e => setDownPct(Number(e.target.value))}
+          <input type="range" min="0" max="100" value={downPct} onChange={e => setDownPct(Number(e.target.value))}
             className="w-full accent-purple-400" />
         </div>
         <div>
           <label className="text-xs text-slate-400 mb-1 block">Interest Rate: {rate}%</label>
-          <input type="range" min="4" max="15" step="0.5" value={rate} onChange={e => setRate(Number(e.target.value))}
+          <input type="range" min="0" max="18" step="0.5" value={rate} onChange={e => setRate(Number(e.target.value))}
             className="w-full accent-purple-400" />
         </div>
         <div>
           <label className="text-xs text-slate-400 mb-1 block">Loan Term: {years} years</label>
-          <input type="range" min="5" max="25" value={years} onChange={e => setYears(Number(e.target.value))}
+          <input type="range" min="0" max="30" value={years} onChange={e => setYears(Number(e.target.value))}
             className="w-full accent-purple-400" />
         </div>
         <div>
           <label className="text-xs text-slate-400 mb-1 block">Owner Salary: {fmt(ownerSalary)}</label>
-          <input type="range" min="0" max="200000" step="5000" value={ownerSalary} onChange={e => setOwnerSalary(Number(e.target.value))}
+          <input type="range" min="0" max="750000" step="5000" value={ownerSalary} onChange={e => setOwnerSalary(Number(e.target.value))}
             className="w-full accent-purple-400" />
         </div>
       </div>
