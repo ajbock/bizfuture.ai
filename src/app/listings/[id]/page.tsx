@@ -1,4 +1,4 @@
-﻿import Link from "next/link"
+import Link from "next/link"
 import { notFound } from "next/navigation"
 import { createClient } from "@supabase/supabase-js"
 import MatchedBuyers from "./MatchedBuyers"
@@ -60,6 +60,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-xs bg-cyan-400/10 text-cyan-400 border border-cyan-400/20 px-3 py-1 rounded-full font-medium">{biz.industry ?? "Business"}</span>
                 <span className="text-xs text-slate-500">{biz.listing_type ?? "For Sale"}</span>
+                {biz.is_sample && <span className="text-xs text-slate-500">Sample Listing</span>}
               </div>
               <h1 className="text-2xl font-black text-white mb-2">{biz.title}</h1>
               <p className="text-slate-400 text-sm">{[biz.city, biz.county, biz.state].filter(Boolean).join(", ")}</p>
