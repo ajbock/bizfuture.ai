@@ -1,4 +1,4 @@
-﻿import { createClient } from "@/lib/supabase-server"
+import { createClient } from "@/lib/supabase-server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import ManageSubscription from "./ManageSubscription"
@@ -67,7 +67,7 @@ export default async function DashboardPage() {
             <Link href="/listings/new" className={atLimit ? "bg-slate-600 text-slate-400 font-bold px-4 py-2 rounded-full text-sm uppercase tracking-wide cursor-not-allowed" : "bg-cyan-400 text-[#0a0f1e] font-bold px-4 py-2 rounded-full text-sm uppercase tracking-wide hover:bg-cyan-300 transition"}>
               Post Ad
             </Link>
-            <Link href="/auth/signout" className="text-slate-400 text-sm hover:text-white transition">Sign Out</Link>
+            <a href="/auth/signout" className="text-slate-400 text-sm hover:text-white transition">Sign Out</a>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState } from "react"
 import { createClient } from "@/lib/supabase-browser"
@@ -117,7 +117,7 @@ export default function EditBrokerProfile({ broker }: { broker: any }) {
           <Link href="/" className="text-xl font-black">Biz<span className="text-cyan-400">Future</span>.ai</Link>
           <div className="flex items-center gap-4">
             <Link href="/dashboard" className="text-slate-400 text-sm hover:text-white transition">My Dashboard</Link>
-            <Link href="/auth/signout" className="text-slate-400 text-sm hover:text-white transition">Sign Out</Link>
+            <a href="/auth/signout" className="text-slate-400 text-sm hover:text-white transition">Sign Out</a>
           </div>
         </div>
       </div>

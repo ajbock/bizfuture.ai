@@ -1,4 +1,4 @@
-﻿import { createClient } from "@/lib/supabase-server"
+import { createClient } from "@/lib/supabase-server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { getAdminClient } from "@/lib/supabase-admin"
@@ -36,7 +36,7 @@ export default async function BrokerDashboardPage() {
             <span className="text-slate-400 text-sm">Welcome, {name}</span>
             <span className="bg-purple-500/20 border border-purple-500/40 text-purple-400 text-xs font-bold px-3 py-1 rounded-full">BROKER</span>
             <Link href="/listings/new" className="bg-cyan-400 text-[#0a0f1e] font-bold px-4 py-2 rounded-full text-sm uppercase tracking-wide hover:bg-cyan-300 transition">Post Listing</Link>
-            <Link href="/auth/signout" className="text-slate-400 text-sm hover:text-white transition">Sign Out</Link>
+            <a href="/auth/signout" className="text-slate-400 text-sm hover:text-white transition">Sign Out</a>
           </div>
         </div>
       </div>
