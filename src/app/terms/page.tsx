@@ -1,4 +1,4 @@
-﻿import Link from "next/link"
+import Link from "next/link"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = { title: "Terms of Service" }
@@ -14,7 +14,7 @@ export default function TermsPage() {
       </div>
       <div className="max-w-3xl mx-auto px-6 pb-16">
         <h1 className="text-4xl font-black text-white mb-2">Terms of Service</h1>
-        <p className="text-slate-400 text-sm mb-10">Last updated: August 2026 | Velocifuture LLC dba BizFuture.ai</p>
+        <p className="text-slate-400 text-sm mb-10">Last updated: October 2026 | Velocifuture LLC dba BizFuture.ai</p>
 
         <div className="flex flex-col gap-8 text-slate-300 leading-relaxed">
           <section>
@@ -54,6 +54,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-bold text-white mb-3">5. AI-Generated Content</h2>
             <p>This platform may use artificial intelligence tools to assist with generating listing descriptions and other content. AI-generated content is provided as a starting point only and may not be fully accurate. Users are responsible for reviewing and verifying all AI-generated content before publishing. BizFuture.ai is not liable for errors, omissions, or inaccuracies in AI-generated content.</p>
+            <p className="mt-3"><strong className="text-white">Synthetic demonstration listings.</strong> This site may contain synthetically generated advertisements and listings, created to demonstrate features of the platform. Listings identified as samples or demonstrations do not represent real businesses for sale, and you should not rely on them or contact anyone in connection with them. Where possible, such listings are labeled as samples.</p>
           </section>
 
           <section>
